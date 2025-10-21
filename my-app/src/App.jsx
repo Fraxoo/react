@@ -1,54 +1,44 @@
-import { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-function App() {
-  return (
-    <BrowserRouter>
-      <nav style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-        <Link to="/">Accueil</Link>
-        <Link to="/about">À propos</Link>
-        <Link to="/user/42">Profil utilisateur</Link>
-      </nav>
+export function App(){
+    // J'ai mes données
+    const products = [
+        {name : "Lenovo thinkpad T440", price:2300, stock:20,img : "http://unsplash.it/100/100"},
+        {name : "Dell latitude", price:1580, stock :30, img : "http://unsplash.it/100/100" },
+        {name : "Alienware", price:700, stock :15, img : "http://unsplash.it/100/100"},
+        {name : "Azus", price:100, stock:20, img : "http://unsplash.it/100/100"}
+    ];
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/user/:id" element={<User />} />
-      </Routes>
-    </BrowserRouter>
-  );
+    const [range,setRange] = useState(1000);
+
+    function handleChange(event){
+        setRange(event.target.value);
+    }
+
+    const productsFilter = products.filter(product => product.price < range);
+    console.log(productsFilter);
+    
+
+
+
+    const productsBalises = productsFilter.map( (product,i) => {
+        return (
+            <div key={i} style={{border:"solid black 1px"}}>
+                <p> {product.name} </p>
+                <p> {product.price} €</p>
+                <p> stock:{product.stock} </p>
+                <img src={product.img} alt="" />
+            </div>
+        )
+    } );
+
+    return (
+        <div>
+            <label>
+                max : {range}€
+                <input type="range" max="5000" onChange={handleChange}  defaultValue={1000} />
+            </label>
+            {productsBalises}
+        </div>
+    )
 }
-
-// Page d'accueil
-function Home() {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <h1>🏠 Page d’accueil</h1>
-      <p>Clique pour aller sur la page "À propos".</p>
-      <button onClick={() => navigate("/about")}>Aller à propos</button>
-    </div>
-  );
-}
-
-// Page "À propos"
-function About() {
-  return (
-    <div>
-      <h1>ℹ️ À propos</h1>
-      <p>Ce site démontre le fonctionnement du routeur React.</p>
-    </div>
-  );
-}
-
-// Page avec paramètre dynamique
-function User() {
-  const { id } = useParams();
-  return (
-    <div>
-      <h1>👤 Profil utilisateur</h1>
-      <p>ID reçu dans l’URL : <strong>{id}</strong></p>
-    </div>
-  );
-}
-
-export default App;
